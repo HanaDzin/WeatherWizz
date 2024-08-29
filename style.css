@@ -21,6 +21,8 @@ body {
     max-width: 425px;
     flex-grow: 1;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
 }
 
 .search-section {
@@ -90,6 +92,37 @@ body {
 
 .location-button span {
     font-size: 1.3rem;
+}
+
+body.show-no-results .weather-section {
+    visibility: hidden;
+}
+
+.no-results {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+    padding: 40px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+    gap: 15px;
+}
+
+body.show-no-results .no-results {
+    display: flex;
+}
+
+.no-results .message {
+    font-weight: 500;
+}
+
+.no-results .weather-icon {
+    width: 30%;
 }
 
 .current-weather {

@@ -1,6 +1,7 @@
 const searchInput = document.querySelector(".search-input");
 const currentWeatherDiv = document.querySelector(".current-weather");
 const hourlyWeatherDiv = document.querySelector(".hourly-weather .weather-list");
+const locationButton = document.querySelector(".location-button");
 
 const API_KEY = "50531ac95457476ba6283358242908";
 
@@ -44,8 +45,12 @@ const displayHourlyForecast = (hourlyData) => {
 };
 
 //get weather data from free weather API:
-const getWeatherDetails = async (cityName) => {
-  const API_URL = `http://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${cityName}&days=2`;
+const getWeatherDetails = async (API_URL) => {
+  //on mobile, removing input focus hides the keyboard to show weather details
+  window.innerWidth <= 768 && searchInput.blur();
+
+  //don't show the error if everything is okay
+  document.body.classList.remove("show-no-results");
 
   try {
     //fetching weather data from the API & parsing the response as JSON
@@ -65,11 +70,17 @@ const getWeatherDetails = async (cityName) => {
     //fetch & display the hourly forecast
     const combinedHourlyData = [...data.forecast.forecastday[0].hour, ...data.forecast.forecastday[1].hour];
     displayHourlyForecast(combinedHourlyData);
-
+    searchInput.value = data.location.name; //search input element always shows name of currently chosen city
     console.log(data);
   } catch (error) {
-    console.log(error);
+    document.body.classList.add("show-no-results"); //in case of an non-existing city, show message
   }
+};
+
+//setting up a request for a specific city
+const setupWeatherRequest = (cityName) => {
+  const API_URL = `http://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${cityName}&days=2`;
+  getWeatherDetails(API_URL);
 };
 
 //get the city name value from input
@@ -77,6 +88,20 @@ searchInput.addEventListener("keyup", (e) => {
   const cityName = searchInput.value.trim();
 
   if (e.key == "Enter" && cityName) {
-    getWeatherDetails(cityName);
+    setupWeatherRequest(cityName);
   }
+});
+
+//get users location & fetch data for this location
+locationButton.addEventListener("click", () => {
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const { latitude, longitude } = position.coords;
+      const API_URL = `http://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${latitude},${longitude}&days=2`;
+      getWeatherDetails(API_URL);
+    },
+    (error) => {
+      alert("Location access denied. Please enable permissions to use this feature.");
+    }
+  );
 });
