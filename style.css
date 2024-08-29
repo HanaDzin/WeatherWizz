@@ -129,11 +129,12 @@ body {
 .weather-list {
     display: flex;
     list-style: none;
-    gap: 55px;
+    gap: 38px;
     overflow-x: auto;
     scrollbar-width: thin;
     scrollbar-color: transparent transparent;
     padding-bottom: 16px;
+    padding-left: 15px;
     margin-bottom: -16px;
 }
 
